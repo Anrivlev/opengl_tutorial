@@ -1,4 +1,3 @@
-#include <GL/gl.h>
 #include <GL/freeglut.h>
 #include <stdio.h>
 
