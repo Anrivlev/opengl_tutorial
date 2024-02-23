@@ -5,11 +5,23 @@
 #include "ogldev_math_3d.h"
 
 GLuint VBO;
+GLint gScaleLocation;
+
 const char* pVSFileName = "shader.vs";
 const char* pFSFileName = "shader.fs";
 
 static void RenderSceneCB() {
     glClear(GL_COLOR_BUFFER_BIT);
+
+    static float Scale = 0.0f;
+    static float Delta = 0.001f;
+
+    Scale += Delta;
+    if ((Scale >= 1.0f) || (Scale <= -1.0f)) {
+        Delta *= -1.0f;
+    }
+
+    glUniform1f(gScaleLocation, Scale);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -20,6 +32,8 @@ static void RenderSceneCB() {
     glDrawArrays(GL_TRIANGLES, 0, 6);
 
     glDisableVertexAttribArray(0);
+
+    glutPostRedisplay();
 
     glutSwapBuffers();
 }
@@ -103,6 +117,12 @@ static void CompileShaders() {
     if (Success == 0) {
         glGetProgramInfoLog(ShaderProgram, sizeof(ErrorLog), NULL, ErrorLog);
         fprintf(stderr, "Error linking shader programL '%s'\n", ErrorLog);
+        exit(1);
+    }
+
+    gScaleLocation = glGetUniformLocation(ShaderProgram, "gScale");
+    if (gScaleLocation == -1) {
+        printf("Error getting uniform location of 'gScale'\n");
         exit(1);
     }
 
