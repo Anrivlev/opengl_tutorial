@@ -5,7 +5,7 @@
 #include "ogldev_math_3d.h"
 
 GLuint VBO;
-GLint gRotationLocation;
+GLint gTransformationLocation;
 
 const char *pVSFileName = "shader.vs";
 const char *pFSFileName = "shader.fs";
@@ -27,7 +27,7 @@ static void RenderSceneCB()
                       0.0f, 0.0f, 1.0f, 0.0,
                       0.0f, 0.0f, 0.0f, 1.0f);
 
-    glUniformMatrix4fv(gRotationLocation, 1, GL_TRUE, &Rotation.m[0][0]);
+    glUniformMatrix4fv(gTransformationLocation, 1, GL_TRUE, &Rotation.m[0][0]);
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -135,8 +135,8 @@ static void CompileShaders()
         exit(1);
     }
 
-    gRotationLocation = glGetUniformLocation(ShaderProgram, "gRotation");
-    if (gRotationLocation == -1)
+    gTransformationLocation = glGetUniformLocation(ShaderProgram, "gRotation");
+    if (gTransformationLocation == -1)
     {
         printf("Error getting uniform location of 'gRotation'\n");
         exit(1);

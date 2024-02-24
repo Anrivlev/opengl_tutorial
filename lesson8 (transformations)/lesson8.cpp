@@ -10,24 +10,39 @@ GLint gTransformationLocation;
 const char *pVSFileName = "shader.vs";
 const char *pFSFileName = "shader.fs";
 
-static void RenderSceneCB()
+static void CombinedTransformation()
 {
-    glClear(GL_COLOR_BUFFER_BIT);
+    static float Scale = 1.5f;
 
-    static float AngleInRadians = 0.0f;
+    Matrix4f Scaling(Scale, 0.0f, 0.0f, 0.0f,
+                      0.0f, Scale, 0.0f, 0.0f,
+                      0.0f, 0.0f, Scale, 0.0,
+                      0.0f, 0.0f, 0.0f, 1.0f);
+
+    static float Loc = 0.0f;
     static float Delta = 0.01f;
-    AngleInRadians += Delta;
-    if ((AngleInRadians >= 1.5708f) || (AngleInRadians <= -1.5708f))
+
+    Loc += Delta;
+    if ((Loc >= 0.5f) || (Loc <= -0.5f))
     {
         Delta *= -1.0f;
     }
 
-    Matrix4f Rotation(cosf(AngleInRadians), -sinf(AngleInRadians), 0.0f, 0.0f,
-                      sinf(AngleInRadians), cosf(AngleInRadians), 0.0f, 0.0f,
-                      0.0f, 0.0f, 1.0f, 0.0,
-                      0.0f, 0.0f, 0.0f, 1.0f);
+    Matrix4f Translation(1.0f, 0.0f, 0.0f, Loc,
+                         0.0f, 1.0f, 0.0f, 0.0f,
+                         0.0f, 0.0f, 1.0f, 0.0,
+                         0.0f, 0.0f, 0.0f, 1.0f);
 
-    glUniformMatrix4fv(gTransformationLocation, 1, GL_TRUE, &Rotation.m[0][0]);
+    Matrix4f FinalTransform = Translation * Scaling;
+
+    glUniformMatrix4fv(gTransformationLocation, 1, GL_TRUE, &FinalTransform.m[0][0]);
+}
+
+static void RenderSceneCB()
+{
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    CombinedTransformation();
 
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
 
@@ -135,10 +150,10 @@ static void CompileShaders()
         exit(1);
     }
 
-    gTransformationLocation = glGetUniformLocation(ShaderProgram, "gRotation");
+    gTransformationLocation = glGetUniformLocation(ShaderProgram, "gTransformation");
     if (gTransformationLocation == -1)
     {
-        printf("Error getting uniform location of 'gRotation'\n");
+        printf("Error getting uniform location of 'gTransformation'\n");
         exit(1);
     }
 
