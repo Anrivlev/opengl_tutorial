@@ -63,9 +63,17 @@ static void RenderSceneCB()
 
     float ar = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
 
+    float NearZ = 1.0f;
+    float FarZ = 10.0f;
+
+    float zRange = NearZ - FarZ;
+
+    float A = (-FarZ - NearZ) / zRange;
+    float B = 2.0f * FarZ * NearZ / zRange;
+
     Matrix4f Projection(f/ar,  0.0f, 0.0f, 0.0f,
                         0.0f, f, 0.0f, 0.0f,
-                        0.0f, 0.0f, 1.0f, 0.0f,
+                        0.0f, 0.0f, A, B,
                         0.0f, 0.0f, 1.0f, 0.0f);
 
     Matrix4f FinalMatrix = Projection * Translation * Rotation;
