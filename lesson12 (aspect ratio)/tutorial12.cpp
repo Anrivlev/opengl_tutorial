@@ -27,8 +27,8 @@
 
 #include "ogldev_math_3d.h"
 
-#define WINDOW_WIDTH  1200
-#define WINDOW_HEIGHT 1200
+#define WINDOW_WIDTH  300
+#define WINDOW_HEIGHT 200
 
 GLuint VBO;
 GLuint IBO;
@@ -54,14 +54,16 @@ static void RenderSceneCB()
 
     Matrix4f Translation(1.0f, 0.0f, 0.0f, 0.0f,
                          0.0f, 1.0f, 0.0f, 0.0f,
-                         0.0f, 0.0f, 1.0f, 0.90f,
+                         0.0f, 0.0f, 1.0f, 3.0f,
                          0.0f, 0.0f, 0.0f, 1.0f);
 
     float FOV = 90.0f;
     float tanHalfFOV = tanf(ToRadian(FOV / 2.0f));
     float f = 1/tanHalfFOV;
 
-    Matrix4f Projection(f,  0.0f, 0.0f, 0.0f,
+    float ar = (float)WINDOW_WIDTH / (float)WINDOW_HEIGHT;
+
+    Matrix4f Projection(f/ar,  0.0f, 0.0f, 0.0f,
                         0.0f, f, 0.0f, 0.0f,
                         0.0f, 0.0f, 1.0f, 0.0f,
                         0.0f, 0.0f, 1.0f, 0.0f);
